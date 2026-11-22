@@ -1,3 +1,5 @@
+> **Watch and try it:** the video, a guess-first question and the interactive figures for this episode are on [the episode page](https://apexcompute.github.io/courses/claude-code/E01/).
+
 # E01 A chat model can only "talk". How do we make it "do"? (s01 Agent Loop)
 
 > This is the E01 folder of the materials for my study log of learn-claude-code. It follows the video.

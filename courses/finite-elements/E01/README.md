@@ -1,3 +1,5 @@
+> **Watch and try it:** the video, a guess-first question and the interactive figures for this episode are on [the episode page](https://apexcompute.github.io/courses/finite-elements/E01/).
+
 # E01 materials: how three springs become `K u = f`
 
 Finite Elements from Scratch (I used two open courses, from EAFIT and Imperial College London, as references; not affiliated with the authors of those courses, see `../NOTICE.md`). I wrote the script myself; it contains no notebooks, code, data or assignments from those two courses.
