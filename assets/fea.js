@@ -234,7 +234,50 @@
     inp.oninput = draw; sel.onchange = draw; draw();
   }
 
-  var KINDS = { bet: bet, build: build, play: play, quiz: quiz, weak: weak };
+  // E03: cut the 4 cm bar into n elements; hat loads, Dirichlet ends, solve; compare with the exact curve
+  function refine(root, c) {
+    var L = 4, kA = 2, Tl = 20, Tr = 20;                     // kA in W·cm/K, q in W/cm
+    var Q = { uniform: function (x) { return 20; }, middle: function (x) { return x >= 1 && x <= 3 ? 40 : 0; } };
+    var EX = { uniform: function (x) { return 20 + 5 * x * (L - x); },
+      middle: function (x) { return x < 1 ? 20 + 20 * x : x > 3 ? 20 + 20 * (L - x) : 50 - 10 * (x - 2) * (x - 2); } };
+    function fem(n, src) {
+      var h = L / n, k = kA / h, f = new Array(n + 1).fill(0), m = 400;
+      for (var e = 0; e < n; e++) for (var s = 0; s < m; s++) {           // midpoint rule for the hat loads
+        var x = e * h + (s + 0.5) * h / m, w = h / m * Q[src](x), u = (x - e * h) / h;
+        f[e] += w * (1 - u); f[e + 1] += w * u;
+      }
+      var N = n - 1, a = [], b = [], cc = [], d = [];                    // interior nodes 1..n-1, tridiagonal
+      for (var i = 1; i < n; i++) { a.push(-k); b.push(2 * k); cc.push(-k); d.push(f[i] + (i === 1 ? k * Tl : 0) + (i === n - 1 ? k * Tr : 0)); }
+      for (i = 1; i < N; i++) { var w2 = a[i] / b[i - 1]; b[i] -= w2 * cc[i - 1]; d[i] -= w2 * d[i - 1]; }
+      var T = new Array(N); T[N - 1] = d[N - 1] / b[N - 1];
+      for (i = N - 2; i >= 0; i--) T[i] = (d[i] - cc[i] * T[i + 1]) / b[i];
+      return [Tl].concat(T, [Tr]);
+    }
+    function errs(n, src) {
+      var T = fem(n, src), h = L / n, en = 0, em = 0;
+      T.forEach(function (v, i) { en = Math.max(en, Math.abs(v - EX[src](i * h))); });
+      for (var e = 0; e < n; e++) em = Math.max(em, Math.abs((T[e] + T[e + 1]) / 2 - EX[src]((e + 0.5) * h)));
+      return [T, en, em];
+    }
+    root.innerHTML = '<div class="row"><span>elements:</span>' + [2, 4, 8, 16].map(function (n) { return '<button type="button" data-n="' + n + '">' + n + "</button>"; }).join("") +
+      '<label>heat <select><option value="uniform">whole bar</option><option value="middle">middle half only</option></select></label></div><div class="fig"></div><div class="tab"></div><p class="msg" aria-live="polite"></p>';
+    var n = c.start || 4, sel = root.querySelector("select");
+    function draw() {
+      var src = sel.value, r = errs(n, src);
+      root.querySelectorAll("button[data-n]").forEach(function (b) { b.setAttribute("aria-pressed", +b.dataset.n === n ? "true" : "false"); });
+      root.querySelector(".fig").innerHTML = barPlot({ L: L, tmin: 20, tmax: 60, exact: EX[src] }, r[0]);
+      var rows = [2, 4, 8, 16].map(function (m, j, all) {
+        var e = errs(m, src), prev = j ? errs(all[j - 1], src)[2] : null;
+        return "<tr" + (m === n ? ' style="font-weight:700"' : "") + "><td>" + m + "</td><td>" + fmt(L / m) + "</td><td>" + fmt(e[1]) + "</td><td>" + fmt(e[2]) + "</td><td>" + (prev ? fmt(e[2] / prev) : "–") + "</td></tr>";
+      }).join("");
+      root.querySelector(".tab").innerHTML = '<div class="scroll"><table class="k"><tr><th>n</th><th>h (cm)</th><th>largest error at nodes (K)</th><th>at element middles (K)</th><th>ratio</th></tr>' + rows + "</table></div>";
+      root.querySelector(".msg").innerHTML = "Node temperatures: " + r[0].map(function (v) { return fmt(Math.round(v * 1000) / 1000); }).join(", ") + " °C.";
+    }
+    root.querySelectorAll("button[data-n]").forEach(function (b) { b.onclick = function () { n = +b.dataset.n; draw(); }; });
+    sel.onchange = draw; draw();
+  }
+
+  var KINDS = { bet: bet, build: build, play: play, quiz: quiz, weak: weak, refine: refine };
   document.querySelectorAll("[data-fea]").forEach(function (root) {
     try { KINDS[root.dataset.fea](root, JSON.parse(root.dataset.config)); root.classList.add("widget"); }
     catch (e) { root.innerHTML = '<p class="note">This figure needs JavaScript.</p>'; }
