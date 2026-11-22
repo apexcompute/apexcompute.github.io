@@ -3,7 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Why does every FEA program end up solving K u = f? · Finite Elements from Scratch · ApexCompute</title>
+<title>Change one spring: which cells of K change? · Finite Elements from Scratch</title>
+<meta name="description" content="Three springs in a chain, a wall on the left, 60 N pulling on the right. Every finite element program ends up solving K u = f. Here you build that K yourself, one spring at a time.">
+<meta property="og:title" content="Change one spring: which cells of K change?">
+<meta property="og:description" content="Three springs in a chain, a wall on the left, 60 N pulling on the right. Every finite element program ends up solving K u = f. Here you build that K yourself, one spring at a time.">
+<meta property="og:image" content="https://i.ytimg.com/vi/B5Yqe6Kili0/maxresdefault.jpg">
 <link rel="stylesheet" href="../../../assets/style.css">
 </head>
 <body>
@@ -11,83 +15,52 @@
   <a class="brand" href="../../../">ApexCompute</a>
   <nav><a href="../../../courses/">Courses</a><a href="../../../privacy.html">Privacy</a></nav>
 </header>
-<main>
-<p class="note"><a href="../">Finite Elements from Scratch</a> · E01</p>
-<h1>E01 materials: how three springs become <code>K u = f</code></h1>
-<p>Finite Elements from Scratch (I used two open courses, from EAFIT and Imperial College London, as references; not affiliated with the authors of those courses, see <code>../NOTICE.md</code>). I wrote the script myself; it contains no notebooks, code, data or assignments from those two courses.</p>
-<pre><code class="language-text">wall |--[k1]--o--[k2]--o--[k3]--o  --&gt; F
-     1        2        3        4      (node numbers)
-</code></pre>
-<p>Three springs in a chain. Node 1 is pinned to the wall, and node 4 is pulled to the right with F. Defaults: k1 = 30, k2 = 20, k3 = 60 N/mm, F = 60 N. Units: force in N, displacement in mm, k in N/mm.</p>
-<h2>1. How to run</h2>
-<pre><code class="language-bash">python3 springs_e01.py
-</code></pre>
-<p>It finishes in under a second. The script follows the order of the video and prints the matrix at every step:</p>
-<ol>
-<li>A unit check (K times u has the same unit as f: N);</li>
-<li>Each spring's own 2×2 stiffness matrix, plus one matrix-times-vector check. The matrix gives &quot;the forces the outside must put on the two end nodes to hold these displacements&quot;; the spring's own pull on the nodes points the other way;</li>
-<li>Adding the springs one by one into the 4×4 big matrix, printing after each one, and writing out which node's force balance each row is;</li>
-<li>Does moving the whole chain 1 mm need a force? (No.) The 4×4 only has the three springs in it; the wall is not in yet. Without the wall's force, the outside forces add up to 60 N and the equations have no solution; with the wall's force, once there is one solution there are infinitely many (shift the whole chain once more);</li>
-<li>Pin node 1: cross out row 1 and column 1, solve the remaining 3×3, check it by hand, and find the force from the wall;</li>
-<li>Make the middle spring twice as stiff (20 → 40 N/mm), redo it, and list the cells of the big matrix that changed.</li>
-</ol>
-<p>The last lines of the output should be:</p>
-<pre><code class="language-text">cells that changed: 4 of 16 -&gt; (2,2) 50-&gt;70 (2,3) -20-&gt;-40 (3,2) -20-&gt;-40 (3,3) 80-&gt;100
-displacements [mm]  A: 0  2  5  6   B: 0  2  3.5  4.5
-nodes whose displacement changed: [3, 4]
-</code></pre>
-<p>The full output is kept in the course repository at <code>experiments/E01/results/springs_e01.txt</code> (every number in the video comes from there). Each case (A is the original, B is after the middle spring gets stiffer) has two <code>PASS</code> lines; the script checks them itself: <code>K u = f</code> holds on the nodes that are not fixed, and the displacements by hand match the ones the program solves for.</p>
-<p>Other options:</p>
+<main class="episode">
+<p class="kicker"><a href="../">Finite Elements from Scratch</a> · Episode 1</p>
+<h1>Change one spring: which cells of K change?</h1>
+<p class="lead">Three springs in a chain, a wall on the left, 60 N pulling on the right. Every finite element program ends up solving K u = f. Here you build that K yourself, one spring at a time.</p>
+<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/B5Yqe6Kili0" title="Watch the episode" loading="lazy" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>
+
+<h2>1. Guess first</h2>
+<p>The springs are 30, 20 and 60 N/mm. The whole chain has one 4×4 table K: row <i>i</i> is the force at node <i>i</i>, column <i>j</i> multiplies how far node <i>j</i> moves. Now the middle spring becomes twice as stiff, 20 → 40, and nothing else changes. Which cells of K change?</p>
+<div data-fea="bet" data-config='{"k":[30,20,60],"F":60,"change":1,"answer":"C",
+ "options":[{"id":"A","text":"only the two cross cells (2,3) and (3,2)"},{"id":"B","text":"only the two diagonal cells (2,2) and (3,3)"},{"id":"C","text":"exactly those four"},{"id":"D","text":"more than four"}],
+ "explain":{"A":"The cross cells do say that nodes 2 and 3 are connected. But pushing node 2 takes force from both springs that touch it, so the diagonal cell has the middle spring in it too.",
+  "B":"The diagonal cells do change, but you missed the cross cells: they are the link between nodes 2 and 3.",
+  "C":"The middle spring joins nodes 2 and 3, so its 2×2 table lands only where rows and columns 2 and 3 cross.",
+  "D":"A stiffer middle spring really does change how far nodes 3 and 4 move. But that is the solved displacement u, not the table K. Cells (3,4), (4,3) and (4,4) come only from the third spring."}}'></div>
+
+<h2>2. Build K one spring at a time</h2>
+<p>Each spring has its own 2×2 table, [k, −k; −k, k]. Assembly adds it into the big table where its two node numbers cross. Step through it, and watch the cells that collect two springs.</p>
+<div data-fea="build" data-config='{"k":[30,20,60],"F":60}'></div>
+<p>Row 2 is the force balance at node 2: −30 u1 + 50 u2 − 20 u3 = 0. The 50 is 30 from the first spring plus 20 from the second, because node 2 touches both. Put the four rows together and you get K u = f, with f = (R1, 0, 0, 60), where R1 is the wall's force.</p>
+
+<h2>3. Play with the stiffness</h2>
+<p>Node 1 is pinned to the wall, so we cross out row 1 and column 1 and solve the remaining 3×3. Move the sliders: the table changes only where a spring's own nodes cross, while the displacements can change all along the chain. Try k3 = 0.</p>
+<div data-fea="play" data-config='{"k":[30,20,60],"F":60}'></div>
+
+<h2>What this episode shows</h2>
 <ul>
-<li><code>--k K1 K2 K3</code>: change the k of the three springs (N/mm).</li>
-<li><code>--force F</code>: change the pull on node 4 (N).</li>
-<li><code>--k2-new X</code>: in the comparison, replace the middle spring with X (default: twice K2).</li>
+  <li>Each spring gives a 2×2 table; force balance at every node adds them into one big table K. That step is assembly.</li>
+  <li>K alone cannot be solved: the whole chain can slide without any force. Pinning one node fixes that.</li>
+  <li>Changing one spring changes exactly four cells of K, where its two nodes cross; the solved displacements can still change everywhere downstream.</li>
 </ul>
-<h2>2. Dependencies</h2>
-<ul>
-<li>The output above comes from Python 3.13.2 and NumPy 2.3.1 (2026-11-15). Only <code>numpy.linalg.solve</code> and <code>matrix_rank</code> are used, so any NumPy from 1.24 on should work [to be checked: only run on 2.3.1].</li>
-<li>No plots, no matplotlib.</li>
-</ul>
-<h2>3. Assumptions and exceptions</h2>
-<p>In the video a result carries only its main assumption; the rest are here.</p>
-<ul>
-<li><strong>The springs are linear</strong>: force is proportional to stretch, and k is a constant. A real spring pulled too far, or a rubber band, does not meet this, and the equations no longer have the shape <code>K u = f</code>.</li>
-<li><strong>At rest</strong> (said together with &quot;linear&quot; in the video): force balance only holds once the nodes stop moving, so there is no acceleration term. When things move there is one more matrix, tied to mass; it is only needed later, for transient heat and vibration.</li>
-<li><strong>The springs all lie on one line and only move along it</strong>: for bars placed at an angle, each one's stiffness matrix also has to be rotated to its direction; that comes with trusses.</li>
-<li><strong>&quot;Changing one spring only touches 4 cells&quot;</strong>: because each node has one unknown (how far it moves to the right) and a spring joins only two nodes, 2 × 2 = 4; it also assumes the connections stay the same and only this spring's k changes. Later elements join more nodes, so one element touches more cells: with one unknown per node (temperature, say), a three-node triangle touches 3 × 3 = 9 cells; in 2D elasticity each node has two unknowns, so a three-node triangle is 6 × 6, up to 36 cells. &quot;Only the cells where its own nodes cross&quot; stays true.</li>
-<li><strong>The displacement of node 2 does not change</strong>: this is a property of this chain. The force is only applied at the end, so every spring carries the same F, and node 2 depends only on the first spring. With a force on a middle node, or springs joined into a network, this is no longer so. The hand calculation's &quot;every spring carries F&quot; also only holds in this case.</li>
-<li><strong>Fixing one node is enough</strong>: this needs the chain to be unbroken and every spring's k to be greater than 0 (k3 = 0 in section 4 is the counterexample). For a chain like this on a straight line, &quot;the whole chain shifts together&quot; is the only way to move without effort, and pinning one point removes it. A body in a plane has three such ways; that comes with elasticity.</li>
-<li><strong>How to fix it</strong>: here the row and the column are crossed out, which is one convenient way to handle u1 = 0. There are other ways (keep the row and column and change the diagonal, or hold the node with a very stiff spring); they come with boundary conditions.</li>
-<li><strong>Pinned at a nonzero displacement</strong>: if node 1 is not pinned at 0 but pushed to a known position u1 = d, column 1 does not give 0. First move this column times d to the right side (subtract the cell of K times d from the right side of each equation), then cross out the row and column.</li>
-<li><strong>A continuous body also leads to <code>K u = f</code></strong>: the springs in this episode are separate pieces to begin with; they are not a finite element model of a continuous body, only the smallest example for seeing &quot;once it is split into elements, how to assemble and how to solve&quot;. How a continuous bar is split into elements, and where each element's stiffness matrix comes from, starts in the next episode.</li>
-</ul>
-<h2>4. Change it and play</h2>
-<p>Cut the third spring, that is, k3 = 0:</p>
-<pre><code class="language-bash">python3 springs_e01.py --k 30 20 0
-</code></pre>
-<p>Think about two things before you run it:</p>
-<ol>
-<li>Which cells of the 4×4 big matrix become 0?</li>
-<li>With node 1 still pinned to the wall, can you still solve for the displacements? Why?</li>
-</ol>
-<details><summary>Check your answer</summary>
-<pre><code class="language-text">  node 3: -20 u2 +20 u3 = 0
-  node 4: 0 = 60
-...
-  reduced K has rank 2 of 3: still no unique answer.
-</code></pre>
-<p>Of the 4 cells the third spring used to occupy, (3,3), (3,4), (4,3), (4,4), its share is gone: (3,4), (4,3), (4,4) become 0, and (3,3) keeps only the 20 from the second spring. The row of node 4 becomes &quot;0 = 60&quot;: node 4 is cut off from the chain, the 60 N pulling it is held by no spring, and this equation cannot hold. Pinning node 1 only holds the part connected to the wall; it cannot hold the cut-off node 4. To solve it, node 4 also needs something holding it.</p>
+
+<h2>Run it yourself</h2>
+<p>One script with NumPy only. It prints the table after every spring, solves the chain, checks it by hand, and lists the cells that changed.</p>
+<pre><code>python3 springs_e01.py
+python3 springs_e01.py --k 30 20 0     # cut the third spring</code></pre>
+<p><a class="button" href="https://github.com/apexcompute/apexcompute.github.io/tree/main/courses/finite-elements/E01">Code and README on GitHub</a></p>
+<details><summary>Before you run the second line: which cells become 0, and can you still solve it?</summary>
+<p>Cells (3,4), (4,3) and (4,4) become 0, and (3,3) keeps only the 20 from the second spring. The row for node 4 becomes "0 = 60": node 4 is cut off, nothing holds the 60 N pulling it, so there is no solution. Pinning node 1 holds only the part still connected to the wall.</p>
 </details>
 
-<h2>Files</h2>
-<ul>
-  <li><a href="README.md">README.md</a></li>
-  <li><a href="springs_e01.py">springs_e01.py</a></li>
-</ul>
-<p class="note">License: <a href="../NOTICE.md">NOTICE.md</a>.</p>
+<nav class="pager"><span></span><a class="button sub" href="https://www.youtube.com/@apexcompute372?sub_confirmation=1">Subscribe on YouTube</a><span class="note">Next episode soon</span></nav>
+<p class="note">Code license: <a href="https://github.com/apexcompute/apexcompute.github.io/blob/main/courses/finite-elements/NOTICE.md">NOTICE.md</a>.</p>
 </main>
 <footer>
   <p>© 2026 ApexCompute · <a href="../../../privacy.html">Privacy</a></p>
 </footer>
+<script src="../../../assets/fea.js"></script>
 </body>
 </html>

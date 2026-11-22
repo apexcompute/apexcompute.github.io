@@ -1,6 +1,7 @@
 {
  "E01": {
-  "title": "Why does every FEA program end up solving K u = f?",
-  "video": null
+  "title": "Change one spring: which cells of K change?",
+  "video": "https://youtu.be/B5Yqe6Kili0",
+  "lead": "Three springs in a chain, a wall on the left, 60 N pulling on the right. Every finite element program ends up solving K u = f. Here you build that K yourself, one spring at a time."
  }
 }
