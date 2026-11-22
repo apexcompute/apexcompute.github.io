@@ -177,7 +177,64 @@
     draw();
   }
 
-  var KINDS = { bet: bet, build: build, play: play };
+  // generic guess: options, then the explanation for the one picked (and an optional figure kind to draw after)
+  function quiz(root, c) {
+    var picked = null;
+    root.innerHTML = '<div class="row choices"></div><div class="row"><button class="go" disabled>Check</button></div><div class="out"></div><p class="msg" aria-live="polite"></p>';
+    var row = root.querySelector(".choices");
+    c.options.forEach(function (o) {
+      var b = el("button", { type: "button", "aria-pressed": "false" }, "<b>" + o.id + "</b> " + o.text);
+      b.onclick = function () {
+        picked = o.id;
+        row.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+        root.querySelector(".go").disabled = false;
+      };
+      row.appendChild(b);
+    });
+    root.querySelector(".go").onclick = function () {
+      var right = picked === c.answer;
+      root.querySelector(".msg").innerHTML = '<span class="' + (right ? "ok" : "bad") + '">' + (right ? "Right. " : "Not quite. The answer is " + c.answer + ". ") +
+        "</span>" + c.explain[picked] + (c.after ? " " + c.after : "");
+      if (c.figure && KINDS[c.figure.kind]) { var d = el("div"); root.querySelector(".out").innerHTML = ""; root.querySelector(".out").appendChild(d); KINDS[c.figure.kind](d, c.figure); }
+    };
+  }
+
+  // a 1D bar: exact temperature (dashed) and the broken line through the nodes (solid), on x in [0, L] cm
+  function barPlot(c, nodesT, extra) {
+    var W = 640, H = 300, L = c.L, lo = c.tmin, hi = c.tmax, px = function (x) { return 60 + (W - 90) * x / L; },
+      py = function (T) { return H - 40 - (H - 70) * (T - lo) / (hi - lo); }, s = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Temperature along the bar">';
+    for (var T = lo; T <= hi; T += 10) s += '<line x1="60" x2="' + (W - 30) + '" y1="' + py(T) + '" y2="' + py(T) + '" stroke="var(--line)"/><text x="52" y="' + (py(T) + 5) + '" text-anchor="end" font-size="13" fill="var(--muted)">' + T + "</text>";
+    for (var x = 0; x <= L; x++) s += '<text x="' + px(x) + '" y="' + (H - 18) + '" text-anchor="middle" font-size="13" fill="var(--muted)">' + x + "</text>";
+    s += '<text x="' + (W - 30) + '" y="' + (H - 2) + '" text-anchor="end" font-size="13" fill="var(--muted)">x (cm)</text><text x="14" y="22" font-size="13" fill="var(--muted)">T (°C)</text>';
+    var ex = [];
+    for (var i = 0; i <= 80; i++) { var xx = L * i / 80; ex.push(px(xx) + "," + py(c.exact(xx))); }
+    s += '<polyline points="' + ex.join(" ") + '" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 5"/>';
+    var n = nodesT.length - 1, pts = nodesT.map(function (T, i) { return px(L * i / n) + "," + py(T); });
+    s += '<polyline points="' + pts.join(" ") + '" fill="none" stroke="var(--accent)" stroke-width="3"/>';
+    nodesT.forEach(function (T, i) { s += '<circle cx="' + px(L * i / n) + '" cy="' + py(T) + '" r="5" fill="var(--accent)"/>'; });
+    return s + (extra || "") + '<text x="' + (W - 34) + '" y="40" text-anchor="end" font-size="13" fill="var(--muted)">dashed: exact · solid: broken line</text></svg>';
+  }
+
+  // E02: move T2 and watch the middle hat's scale: heat leaving node 2 by the slopes vs heat the hat collects
+  function weak(root, c) {
+    var kAh = c.kAh, load = c.load, Tl = c.tl, Tr = c.tr, L = 4, q = c.q;
+    var exact = function (x) { return Tl + (Tr - Tl) * x / L + q * x * (L - x); };
+    root.innerHTML = '<div class="row"><label>T2 <input type="range" min="20" max="70" step="1" value="' + (c.start || 30) + '"><output></output> °C</label>' +
+      '<label>right end <select><option value="20">20 °C</option><option value="40">40 °C</option></select></label></div><div class="fig"></div><p class="msg" aria-live="polite"></p>';
+    var inp = root.querySelector("input"), sel = root.querySelector("select");
+    function draw() {
+      var T2 = +inp.value; Tr = +sel.value;
+      inp.nextElementSibling.textContent = T2;
+      root.querySelector(".fig").innerHTML = barPlot({ L: L, tmin: 20, tmax: 70, exact: exact }, [Tl, T2, Tr]);
+      var out = kAh * (T2 - Tl) + kAh * (T2 - Tr), bal = Math.abs(out - load) < 1e-9;
+      root.querySelector(".msg").innerHTML = "Middle hat N2: heat flowing away from node 2 by the slopes = " + kAh + " × (" + T2 + " − " + Tl + ") + " + kAh + " × (" + T2 + " − " + Tr + ") = <b>" + fmt(out) +
+        " W</b>; heat the hat collects from the bar = <b>" + load + " W</b>. " + (bal ? '<span class="ok">Balanced: this is the T2 the weak form picks. The exact curve passes through the same point, ' + fmt(exact(2)) + " °C.</span>" :
+        (out < load ? "Too little leaves: raise T2." : "Too much leaves: lower T2."));
+    }
+    inp.oninput = draw; sel.onchange = draw; draw();
+  }
+
+  var KINDS = { bet: bet, build: build, play: play, quiz: quiz, weak: weak };
   document.querySelectorAll("[data-fea]").forEach(function (root) {
     try { KINDS[root.dataset.fea](root, JSON.parse(root.dataset.config)); root.classList.add("widget"); }
     catch (e) { root.innerHTML = '<p class="note">This figure needs JavaScript.</p>'; }
