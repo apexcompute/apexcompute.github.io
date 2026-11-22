@@ -277,7 +277,67 @@
     sel.onchange = draw; draw();
   }
 
-  var KINDS = { bet: bet, build: build, play: play, quiz: quiz, weak: weak, refine: refine };
+  // E04: the same node values joined by straight pieces, or by one high-degree curve (equal or Chebyshev spacing)
+  function runge(root, c) {
+    var L = 4;
+    function exact(w) {
+      var a = 2 - w / 2, b = 2 + w / 2;
+      return function (x) {
+        if (x > 2) x = L - x;
+        return x <= a ? 20 + 20 * x : 20 + 20 * a + 20 * (x - a) - (20 / w) * (x - a) * (x - a);
+      };
+    }
+    function nodes(n, cheb) {
+      var xs = [];
+      for (var i = 0; i < n; i++) xs.push(cheb ? 2 - 2 * Math.cos(Math.PI * i / (n - 1)) : L * i / (n - 1));
+      return xs;
+    }
+    function lagrange(xs, ys, x) {
+      var s = 0;
+      for (var i = 0; i < xs.length; i++) {
+        var p = ys[i];
+        for (var j = 0; j < xs.length; j++) if (j !== i) p *= (x - xs[j]) / (xs[i] - xs[j]);
+        s += p;
+      }
+      return s;
+    }
+    function linear(xs, ys, x) {
+      for (var i = 0; i < xs.length - 1; i++) if (x <= xs[i + 1]) return ys[i] + (ys[i + 1] - ys[i]) * (x - xs[i]) / (xs[i + 1] - xs[i]);
+      return ys[ys.length - 1];
+    }
+    root.innerHTML = '<div class="row"><label>nodes <input type="range" min="3" max="17" step="2" value="' + (c.start || 11) + '"><output></output></label>' +
+      '<label>spacing <select class="sp"><option value="eq">equal</option><option value="ch">Chebyshev (crowded at the ends)</option></select></label>' +
+      '<label>heater <select class="hw"><option value="0.4">0.4 cm</option><option value="1.6">1.6 cm</option><option value="4">whole bar</option></select></label></div>' +
+      '<div class="fig"></div><p class="msg" aria-live="polite"></p>';
+    var inp = root.querySelector("input"), sp = root.querySelector(".sp"), hw = root.querySelector(".hw");
+    function draw() {
+      var n = +inp.value, ex = exact(+hw.value), xs = nodes(n, sp.value === "ch"), ys = xs.map(ex);
+      inp.nextElementSibling.textContent = n;
+      var W = 640, H = 320, lo = 0, hi = 80, px = function (x) { return 60 + (W - 90) * x / L; },
+        py = function (T) { return H - 40 - (H - 70) * (Math.max(lo - 20, Math.min(hi + 20, T)) - lo) / (hi - lo); };
+      var s = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Exact temperature, straight pieces and one curve"><defs><clipPath id="rc"><rect x="60" y="30" width="' + (W - 90) + '" height="' + (H - 70) + '"/></clipPath></defs>';
+      for (var T = lo; T <= hi; T += 20) s += '<line x1="60" x2="' + (W - 30) + '" y1="' + py(T) + '" y2="' + py(T) + '" stroke="var(--line)"/><text x="52" y="' + (py(T) + 5) + '" text-anchor="end" font-size="13" fill="var(--muted)">' + T + "</text>";
+      for (var x = 0; x <= L; x++) s += '<text x="' + px(x) + '" y="' + (H - 18) + '" text-anchor="middle" font-size="13" fill="var(--muted)">' + x + "</text>";
+      var pe = [], pl = [], pc = [], el = 0, ec = 0, at = 0;
+      for (var k = 0; k <= 2000; k++) {
+        var xx = L * k / 2000, te = ex(xx), tl = linear(xs, ys, xx), tc = lagrange(xs, ys, xx);
+        el = Math.max(el, Math.abs(tl - te));
+        if (Math.abs(tc - te) > ec) { ec = Math.abs(tc - te); at = xx; }
+        if (k % 4 === 0) { pe.push(px(xx) + "," + py(te)); pl.push(px(xx) + "," + py(tl)); pc.push(px(xx) + "," + py(tc)); }
+      }
+      s += '<g clip-path="url(#rc)"><polyline points="' + pe.join(" ") + '" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 5"/>' +
+        '<polyline points="' + pl.join(" ") + '" fill="none" stroke="var(--accent)" stroke-width="2.5"/>' +
+        '<polyline points="' + pc.join(" ") + '" fill="none" stroke="var(--s2)" stroke-width="2.5"/></g>';
+      xs.forEach(function (xn, i) { s += '<circle cx="' + px(xn) + '" cy="' + py(ys[i]) + '" r="4" fill="var(--fg)"/>'; });
+      s += '<text x="' + (W - 34) + '" y="24" text-anchor="end" font-size="13"><tspan fill="var(--muted)">dashed: exact · </tspan><tspan fill="var(--accent)">straight pieces · </tspan><tspan fill="var(--s2)">one degree-' + (n - 1) + " curve</tspan></text></svg>";
+      root.querySelector(".fig").innerHTML = s;
+      root.querySelector(".msg").innerHTML = "Largest error: straight pieces <b>" + fmt(Math.round(el * 1000) / 1000) + " K</b>; one degree-" + (n - 1) + ' curve <b class="c2">' +
+        fmt(Math.round(ec * 1000) / 1000) + " K</b>" + (ec > 0.01 ? " (at x = " + fmt(Math.round(at * 100) / 100) + " cm)" : "") + ". Both use the same " + n + " node values.";
+    }
+    inp.oninput = draw; sp.onchange = draw; hw.onchange = draw; draw();
+  }
+
+  var KINDS = { bet: bet, build: build, play: play, quiz: quiz, weak: weak, refine: refine, runge: runge };
   document.querySelectorAll("[data-fea]").forEach(function (root) {
     try { KINDS[root.dataset.fea](root, JSON.parse(root.dataset.config)); root.classList.add("widget"); }
     catch (e) { root.innerHTML = '<p class="note">This figure needs JavaScript.</p>'; }
