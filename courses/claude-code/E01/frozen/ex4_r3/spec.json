@@ -1,0 +1,12 @@
+{
+ "model": "claude-sonnet-5-5",
+ "effort": "medium",
+ "inputs": [
+  "The server log keeps showing errors. Is the server running on the port that's set in its config file?"
+ ],
+ "approvals": [],
+ "code": "/course/s01_agent_loop/code.py",
+ "verbose": true,
+ "argv": [],
+ "max_calls": 8
+}

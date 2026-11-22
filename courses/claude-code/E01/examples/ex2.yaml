@@ -1,0 +1,4 @@
+# E01 example 2 (registered before the first run: 5 runs, see README): a question that needs no files. Does the model still call bash?
+chapter: s01_agent_loop
+seed: ../seeds/notes_project
+inputs: ["What is 2 to the power of 10?"]

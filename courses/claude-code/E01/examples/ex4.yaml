@@ -1,0 +1,5 @@
+# E01 example 4 (registered: 5 runs, see README): two things to look at (the config file and the log).
+# Does one reply ask for both? The log is long, so the printout of a tool output is cut at 200 characters.
+chapter: s01_agent_loop
+seed: ../seeds/server_project
+inputs: ["The server log keeps showing errors. Is the server running on the port that's set in its config file?"]

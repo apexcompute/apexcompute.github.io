@@ -1,0 +1,12 @@
+{
+ "model": "claude-sonnet-5-5",
+ "effort": "medium",
+ "inputs": [
+  "How many .txt files are in the notes folder? How many lines does each one have?"
+ ],
+ "approvals": [],
+ "code": "/course/s01_agent_loop/code.py",
+ "verbose": true,
+ "argv": [],
+ "max_calls": 6
+}

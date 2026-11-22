@@ -1,0 +1,16 @@
+{
+ "example": "ex4_r3",
+ "chapter": "s01_agent_loop",
+ "model": "claude-sonnet-5-5",
+ "effort": "medium",
+ "image": "lcc-course-en:v0.1",
+ "fork_head": "443220f",
+ "upstream": "448c75b",
+ "exit": 0,
+ "wall_seconds": 8.6,
+ "max_calls": 8,
+ "calls": 3,
+ "input_tokens": 2930,
+ "output_tokens": 621,
+ "cost_usd_upper": 0.0121
+}

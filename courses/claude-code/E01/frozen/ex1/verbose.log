@@ -1,0 +1,48 @@
+s01: Agent Loop
+Enter a question, press Enter to send. Type q to quit.
+
+[36ms01 >> [0mHow many .txt files are in the notes folder? How many lines does each one have?
+[1m=== verbose mode ===[0m
+[2mMODEL  = claude-sonnet-5-5 (effort = medium)[0m
+[2mSYSTEM = You are a coding agent at /workspace. Environment: Unix-like: the bash tool runs the system shell. Use bash to solve tasks. Act, don't explain.[0m
+[2mTOOLS  = ["bash"][0m
+
+[35m──────────────── Round 1: sent to the model ────────────────[0m
+[2mmessages = [[0m
+[2m  [0] user: "How many .txt files are in the notes folder? How many lines … (79 chars)"[0m
+[2m][0m
+[36m→ calling client.messages.create(...)[0m
+[32mresponse.stop_reason = "tool_use"[0m
+[32mresponse.content = [[0m
+[32m  tool_use: bash({"command": "cd /workspace/notes 2>/dev/null || cd notes; fi… (143 chars))[0m
+[32m][0m
+[2m(input 439 tokens, output 110 tokens, 1.7 s)[0m
+[36m→ run the tools, put the results back into messages as tool_result, next round[0m
+[33m$ cd /workspace/notes 2>/dev/null || cd notes; find . -type f -name '*.txt' | wc -l; find . -type f -name '*.txt' -exec wc -l {} +[0m
+3
+  2 ./diary.txt
+  3 ./plan.txt
+  3 ./todo.txt
+  8 total
+[35m──────────────── Round 2: sent to the model ────────────────[0m
+[2mmessages = [[0m
+[2m  [0] user: "How many .txt files are in the notes folder? How many lines … (79 chars)"[0m
+[2m  [1] assistant/tool_use: bash({"command": "cd /workspace/notes 2>/dev/null || cd notes; fi… (143 chars))[0m
+[2m  [2] user/tool_result: "3\n  2 ./diary.txt\n  3 ./plan.txt\n  3 ./todo.txt\n  8 tota… (61 chars)"[0m
+[2m][0m
+[36m→ calling client.messages.create(...)[0m
+[32mresponse.stop_reason = "end_turn"[0m
+[32mresponse.content = [[0m
+[32m  text: "The notes folder has 3 `.txt` files. This count includes any… (228 chars)"[0m
+[32m][0m
+[2m(input 593 tokens, output 100 tokens, 1.5 s)[0m
+[1mNo tool_use block in the reply → the loop ends, back to waiting for your input[0m
+The notes folder has 3 `.txt` files. This count includes any in subfolders, but all three are at the top level. Line counts:
+
+- `diary.txt`: 2 lines
+- `plan.txt`: 3 lines
+- `todo.txt`: 3 lines
+
+That makes 8 lines in total.
+
+[36ms01 >> [0mq

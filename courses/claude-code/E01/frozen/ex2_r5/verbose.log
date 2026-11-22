@@ -1,0 +1,23 @@
+s01: Agent Loop
+Enter a question, press Enter to send. Type q to quit.
+
+[36ms01 >> [0mWhat is 2 to the power of 10?
+[1m=== verbose mode ===[0m
+[2mMODEL  = claude-sonnet-5-5 (effort = medium)[0m
+[2mSYSTEM = You are a coding agent at /workspace. Environment: Unix-like: the bash tool runs the system shell. Use bash to solve tasks. Act, don't explain.[0m
+[2mTOOLS  = ["bash"][0m
+
+[35m──────────────── Round 1: sent to the model ────────────────[0m
+[2mmessages = [[0m
+[2m  [0] user: "What is 2 to the power of 10?"[0m
+[2m][0m
+[36m→ calling client.messages.create(...)[0m
+[32mresponse.stop_reason = "end_turn"[0m
+[32mresponse.content = [[0m
+[32m  text: "2 to the power of 10 is **1024**."[0m
+[32m][0m
+[2m(input 428 tokens, output 17 tokens, 0.8 s)[0m
+[1mNo tool_use block in the reply → the loop ends, back to waiting for your input[0m
+2 to the power of 10 is **1024**.
+
+[36ms01 >> [0mq

@@ -1,0 +1,12 @@
+{
+ "model": "claude-sonnet-5-5",
+ "effort": "medium",
+ "inputs": [
+  "Write a count.py that counts the words in each file in the notes folder, then run it. Also run wc -w on the same files so we can compare."
+ ],
+ "approvals": [],
+ "code": "/course/s01_agent_loop/code.py",
+ "verbose": true,
+ "argv": [],
+ "max_calls": 8
+}

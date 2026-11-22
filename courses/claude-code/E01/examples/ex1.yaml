@@ -1,0 +1,4 @@
+# E01 example 1: a question you can only answer by looking at the files. The model calls bash; the loop goes round twice.
+chapter: s01_agent_loop
+seed: ../seeds/notes_project
+inputs: ["How many .txt files are in the notes folder? How many lines does each one have?"]

@@ -1,0 +1,17 @@
+2026-11-15 09:00:01 INFO  starting server v1.4.2
+2026-11-15 09:00:01 INFO  reading config/server.ini
+2026-11-15 09:00:01 INFO  PORT environment variable is set, it overrides the config
+2026-11-15 09:00:02 INFO  listening on 0.0.0.0:8081
+2026-11-15 09:00:05 ERROR health check failed: connection refused (127.0.0.1:8080)
+2026-11-15 09:00:10 ERROR health check failed: connection refused (127.0.0.1:8080)
+2026-11-15 09:00:11 INFO  GET /index.html 200 (3 ms)
+2026-11-15 09:00:15 ERROR health check failed: connection refused (127.0.0.1:8080)
+2026-11-15 09:00:20 ERROR health check failed: connection refused (127.0.0.1:8080)
+2026-11-15 09:00:21 INFO  GET /index.html 200 (3 ms)
+2026-11-15 09:00:25 ERROR health check failed: connection refused (127.0.0.1:8080)
+2026-11-15 09:00:30 ERROR health check failed: connection refused (127.0.0.1:8080)
+2026-11-15 09:00:31 INFO  GET /index.html 200 (3 ms)
+2026-11-15 09:00:35 ERROR health check failed: connection refused (127.0.0.1:8080)
+2026-11-15 09:00:40 ERROR health check failed: connection refused (127.0.0.1:8080)
+2026-11-15 09:00:41 INFO  GET /index.html 200 (3 ms)
+2026-11-15 09:00:45 WARN  health check has been failing for 40 s

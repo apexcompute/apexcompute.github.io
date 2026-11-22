@@ -1,0 +1,5 @@
+# E01 example 3 (registered: 1 run, see README): write a small program, run it, and compare with wc -w.
+# The loop goes round several times and messages keep growing.
+chapter: s01_agent_loop
+seed: ../seeds/notes_project
+inputs: ["Write a count.py that counts the words in each file in the notes folder, then run it. Also run wc -w on the same files so we can compare."]

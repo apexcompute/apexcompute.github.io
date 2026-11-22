@@ -1,0 +1,12 @@
+{
+ "model": "claude-sonnet-5-5",
+ "effort": "medium",
+ "inputs": [
+  "What is 2 to the power of 10?"
+ ],
+ "approvals": [],
+ "code": "/course/s01_agent_loop/code.py",
+ "verbose": true,
+ "argv": [],
+ "max_calls": 4
+}
