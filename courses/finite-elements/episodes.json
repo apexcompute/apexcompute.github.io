@@ -3,5 +3,10 @@
   "title": "Change one spring: which cells of K change?",
   "video": "https://youtu.be/B5Yqe6Kili0",
   "lead": "Three springs in a chain, a wall on the left, 60 N pulling on the right. Every finite element program ends up solving K u = f. Here you build that K yourself, one spring at a time."
+ },
+ "E02": {
+  "title": "The weak form: why we rewrite the heat equation",
+  "lead": "An aluminum bar, 4 cm long, makes 80 W of heat along its length; both ends are held at 20 °C. A broken line of two straight pieces can't go into its equation. Rewrite the equation, and it can. Here you find the middle temperature yourself, by balancing one hat.",
+  "video": "https://youtu.be/sir56LEcleo"
  }
 }

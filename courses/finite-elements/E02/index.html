@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The weak form: why we rewrite the heat equation · Finite Elements from Scratch</title>
+<meta name="description" content="An aluminum bar, 4 cm long, makes 80 W of heat along its length; both ends are held at 20 °C. A broken line of two straight pieces can&#x27;t go into its equation. Rewrite the equation, and it can. Here you find the middle temperature yourself, by balancing one hat.">
+<meta property="og:title" content="The weak form: why we rewrite the heat equation">
+<meta property="og:description" content="An aluminum bar, 4 cm long, makes 80 W of heat along its length; both ends are held at 20 °C. A broken line of two straight pieces can&#x27;t go into its equation. Rewrite the equation, and it can. Here you find the middle temperature yourself, by balancing one hat.">
+<meta property="og:image" content="https://i.ytimg.com/vi/sir56LEcleo/maxresdefault.jpg">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../../../">ApexCompute</a>
+  <nav><a href="../../../courses/">Courses</a><a href="../../../privacy.html">Privacy</a></nav>
+</header>
+<main class="episode">
+<p class="kicker"><a href="../">Finite Elements from Scratch</a> · Episode 2</p>
+<h1>The weak form: why we rewrite the heat equation</h1>
+<p class="lead">An aluminum bar, 4 cm long, makes 80 W of heat along its length; both ends are held at 20 °C. A broken line of two straight pieces can't go into its equation. Rewrite the equation, and it can. Here you find the middle temperature yourself, by balancing one hat.</p>
+<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/sir56LEcleo" title="Watch the episode" loading="lazy" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>
+
+<h2>1. Guess first</h2>
+<p>The exact temperature is a parabola, 40 °C in the middle. We look for the temperature only among broken lines: 20 °C at both ends, an unknown T2 at the middle node, straight in between. The test function is the middle hat N2: 1 at node 2, 0 at both ends. Work out T2 from the weak form with N2. Compared with the exact 40 °C, which do you trust most?</p>
+<div data-fea="quiz" data-config='{"answer":"B",
+ "options":[{"id":"A","text":"lower than 40"},{"id":"B","text":"exactly 40"},{"id":"C","text":"exactly 60"},{"id":"D","text":"between 40 and 60"}],
+ "explain":{"A":"A straight line under a bulging curve does sit below it between the nodes, but the weak form does not ask the line to touch the curve; it asks the middle hat to balance, and that lands T2 on 40.",
+  "B":"The exact solution satisfies the weak form, so it balances on the N2 scale; the broken line has one free number, T2, and it balances at the same place.",
+  "C":"60 °C comes from asking the two end slopes to carry all 80 W. The hat counts only the heat it collects: half of each element&apos;s 40 W, so 40 W, not 80.",
+  "D":"The hat scale is neither a point match nor the slope balance, but in this example it lands exactly on the exact value at the node."},
+ "after":"Try it below: move T2 until the scale balances."}'></div>
+
+<h2>2. Balance the middle hat</h2>
+<p>With the middle hat as the test function, the weak form ∫ kA T′ N2′ dx = ∫ q N2 dx becomes one line. The left side is the heat flowing away from node 2 by the slopes of the two pieces: kA/h = 1 W/K per piece, times the temperature difference across it. The right side is the heat the hat collects: each element makes 40 W, and the hat takes half of it, so 20 + 20 = 40 W. Move T2 until the two sides agree.</p>
+<div data-fea="weak" data-config='{"kAh":1,"load":40,"tl":20,"tr":20,"q":5,"start":30}'></div>
+<p>The broken line matches the exact curve at the node, but not between the nodes: at x = 1 cm the broken line gives 30 °C and the exact solution 35 °C. The next episode cuts the bar finer and looks at that error.</p>
+
+<h2>What this episode shows</h2>
+<ul>
+  <li>The original equation −kA T″ = q needs a second derivative; a broken line has none at its kink, so it can never satisfy the equation point by point.</li>
+  <li>Multiply by a test function, integrate, move one derivative with integration by parts: the weak form needs only first derivatives, and a broken line fits. Nothing is approximated yet.</li>
+  <li>The approximation is choosing broken lines for both the temperature and the test functions. Each element's 2×2 small table is kA/h × [1, −1; −1, 1], exactly like a spring's.</li>
+</ul>
+
+<h2>Run it yourself</h2>
+<p>One NumPy script checks every number of the pen-and-paper work; each integral is done by a hand formula and numerically, and prints PASS when they agree.</p>
+<pre><code>python3 weak_e02.py
+python3 weak_e02.py --t-right 40     # the exercise below</code></pre>
+<p><a class="button" href="https://github.com/apexcompute/apexcompute.github.io/tree/main/courses/finite-elements/E02">Code and README on GitHub</a></p>
+<details><summary>Exercise: hold the right end at 40 °C instead. Work out T2 by hand first: 1 × (T2 − 20) + 1 × (T2 − 40) = 40. (You can also switch the right end in the figure above.)</summary>
+<p>T2 = 50 °C, and the exact solution at x = 2 cm is also 50 °C, so the node matches again. The heat leaving the ends becomes 50 W at the left and 30 W at the right, still 80 W in total.</p>
+</details>
+
+<nav class="pager"><a href="../E01/">← Change one spring: which cells of K change?</a><a class="button sub" href="https://www.youtube.com/@apexcompute372?sub_confirmation=1">Subscribe on YouTube</a><span class="note">Next episode soon</span></nav>
+<p class="note">Code license: <a href="https://github.com/apexcompute/apexcompute.github.io/blob/main/courses/finite-elements/NOTICE.md">NOTICE.md</a>.</p>
+</main>
+<footer>
+  <p>© 2026 ApexCompute · <a href="../../../privacy.html">Privacy</a></p>
+</footer>
+<script src="../../../assets/fea.js"></script>
+</body>
+</html>
