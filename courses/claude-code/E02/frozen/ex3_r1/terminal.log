@@ -1,0 +1,63 @@
+s02: Tool Use - four tools added to s01
+Enter a question, press Enter to send. Type q to quit.
+
+[36ms02 >> [0mFind all the .txt files and write the first line of each one into summary.md.
+[1m=== verbose mode ===[0m
+[2mMODEL  = claude-sonnet-5-5 (effort = medium)[0m
+[2mSYSTEM = You are a coding agent at /workspace. Environment: Unix-like: the bash tool runs the system shell. Use tools to solve tasks. Act, don't explain.[0m
+[2mTOOLS  = ["bash", "read_file", "write_file", "edit_file", "glob"][0m
+
+[35m──────────────── Round 1: sent to the model ────────────────[0m
+[2mmessages = [[0m
+[2m  [0] user: "Find all the .txt files and write the first line of each one… (77 chars)"[0m
+[2m][0m
+[36m→ calling client.messages.create(...)[0m
+[32mresponse.stop_reason = "tool_use"[0m
+[32mresponse.content = [[0m
+[32m  tool_use: glob({"pattern": "**/*.txt"})[0m
+[32m][0m
+[2m(input 797 tokens, output 53 tokens, 2.4 s)[0m
+[36m→ run the tools, put the results back into messages as tool_result, next round[0m
+[33m> glob[0m
+notes/diary.txt
+notes/plan.txt
+notes/todo.txt
+[35m──────────────── Round 2: sent to the model ────────────────[0m
+[2mmessages = [[0m
+[2m  [0] user: "Find all the .txt files and write the first line of each one… (77 chars)"[0m
+[2m  [1] assistant/tool_use: glob({"pattern": "**/*.txt"})[0m
+[2m  [2] user/tool_result: "notes/diary.txt\nnotes/plan.txt\nnotes/todo.txt"[0m
+[2m][0m
+[36m→ calling client.messages.create(...)[0m
+[32mresponse.stop_reason = "tool_use"[0m
+[32mresponse.content = [[0m
+[32m  tool_use: bash({"command": "cd /workspace && for f in notes/diary.txt notes… (148 chars))[0m
+[32m][0m
+[2m(input 881 tokens, output 110 tokens, 4.8 s)[0m
+[36m→ run the tools, put the results back into messages as tool_result, next round[0m
+[33m> bash[0m
+- notes/diary.txt: Learned while loops today.
+- notes/plan.txt: Mon: finish chapter three
+- notes/todo.txt: Buy milk
+[35m──────────────── Round 3: sent to the model ────────────────[0m
+[2mmessages = [[0m
+[2m  [0] user: "Find all the .txt files and write the first line of each one… (77 chars)"[0m
+[2m  [1] assistant/tool_use: glob({"pattern": "**/*.txt"})[0m
+[2m  [2] user/tool_result: "notes/diary.txt\nnotes/plan.txt\nnotes/todo.txt"[0m
+[2m  [3] assistant/tool_use: bash({"command": "cd /workspace && for f in notes/diary.txt notes… (148 chars))[0m
+[2m  [4] user/tool_result: "- notes/diary.txt: Learned while loops today.\n- notes/plan.… (118 chars)"[0m
+[2m][0m
+[36m→ calling client.messages.create(...)[0m
+[32mresponse.stop_reason = "end_turn"[0m
+[32mresponse.content = [[0m
+[32m  text: "I found three `.txt` files and wrote the first line of each … (221 chars)"[0m
+[32m][0m
+[2m(input 1051 tokens, output 91 tokens, 4.5 s)[0m
+[1mNo tool_use block in the reply → the loop ends, back to waiting for your input[0m
+I found three `.txt` files and wrote the first line of each into `summary.md`, one bullet per file:
+
+- notes/diary.txt: Learned while loops today.
+- notes/plan.txt: Mon: finish chapter three
+- notes/todo.txt: Buy milk
+
+[36ms02 >> [0mq

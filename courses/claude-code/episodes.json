@@ -3,5 +3,10 @@
   "title": "30 lines that turn a chatbot into an agent",
   "video": "https://youtu.be/6kh8ogDK3AI",
   "lead": "A chat model can only write text. A loop of about 30 lines, with one bash tool, gets it to read files and run commands. Step through a real run and see exactly what goes to the model each round and what comes back."
+ },
+ "E02": {
+  "title": "Give an agent 5 tools without changing the loop",
+  "lead": "Chapter 2 of learn-claude-code adds four tools, to read, write, edit and find files. The loop from episode 1 barely changes: it runs whatever tool name the model writes. Step through real runs and see which tool the model picks, step by step.",
+  "video": "https://youtu.be/nGXc5afCTC8"
  }
 }

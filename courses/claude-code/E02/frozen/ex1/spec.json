@@ -1,0 +1,12 @@
+{
+ "model": "claude-sonnet-5-5",
+ "effort": "medium",
+ "inputs": [
+  "In notes/todo.txt, change \"Buy milk\" to \"Buy soy milk\"."
+ ],
+ "approvals": [],
+ "code": "/course/s01_agent_loop/code.py",
+ "verbose": true,
+ "argv": [],
+ "max_calls": 8
+}

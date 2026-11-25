@@ -1,0 +1,12 @@
+{
+ "model": "claude-sonnet-5-5",
+ "effort": "medium",
+ "inputs": [
+  "Find all the .txt files and write the first line of each one into summary.md."
+ ],
+ "approvals": [],
+ "code": "/course/s02_tool_use/code.py",
+ "verbose": true,
+ "argv": [],
+ "max_calls": 8
+}

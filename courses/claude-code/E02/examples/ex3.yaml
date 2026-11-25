@@ -1,0 +1,5 @@
+# E02 example 3 (repeated 5 times, fixed before the first run; see count_runs.py): a task that needs finding, reading and writing -
+# which tools does s02 pick?
+chapter: s02_tool_use
+seed: ../seeds/notes_project
+inputs: ["Find all the .txt files and write the first line of each one into summary.md."]

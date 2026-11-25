@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Give an agent 5 tools without changing the loop · Learn Claude Code</title>
+<meta name="description" content="Chapter 2 of learn-claude-code adds four tools, to read, write, edit and find files. The loop from episode 1 barely changes: it runs whatever tool name the model writes. Step through real runs and see which tool the model picks, step by step.">
+<meta property="og:title" content="Give an agent 5 tools without changing the loop">
+<meta property="og:description" content="Chapter 2 of learn-claude-code adds four tools, to read, write, edit and find files. The loop from episode 1 barely changes: it runs whatever tool name the model writes. Step through real runs and see which tool the model picks, step by step.">
+<meta property="og:image" content="https://i.ytimg.com/vi/nGXc5afCTC8/maxresdefault.jpg">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../../../">ApexCompute</a>
+  <nav><a href="../../../courses/">Courses</a><a href="../../../privacy.html">Privacy</a></nav>
+</header>
+<main class="episode">
+<p class="kicker"><a href="../">Learn Claude Code</a> · Episode 2</p>
+<h1>Give an agent 5 tools without changing the loop</h1>
+<p class="lead">Chapter 2 of learn-claude-code adds four tools, to read, write, edit and find files. The loop from episode 1 barely changes: it runs whatever tool name the model writes. Step through real runs and see which tool the model picks, step by step.</p>
+<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/nGXc5afCTC8" title="Watch the episode" loading="lazy" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>
+
+<h2>1. Same request, two versions</h2>
+<p>We asked both versions: "In notes/todo.txt, change "Buy milk" to "Buy soy milk"." First the episode 1 version, which only has bash:</p>
+<div data-lcc="replay" data-config='{"run":"frozen/ex1","scale":1200}'></div>
+<p>Then the chapter 2 version, with five tools. Nothing in the loop says "use edit_file for edits"; the model chose it. In 5 repeated runs, it chose edit_file 5 times.</p>
+<div data-lcc="replay" data-config='{"run":"frozen/ex2_r1","scale":1200}'></div>
+
+<h2>2. Guess: find, read, write</h2>
+<p>A new job for the five-tool version: "Find all the .txt files and write the first line of each one into summary.md." Each step has a dedicated tool (glob, read_file, write_file), and bash could do all three. We ran it 5 times, with a fresh program each time, and counted one thing fixed in advance.</p>
+<div data-lcc="tally" data-config='{"question":"In how many of the 5 runs did it use only bash, and not a single dedicated tool?","only":"bash",
+ "options":[{"id":"A","text":"all 5","min":5,"max":5},{"id":"B","text":"3 or 4","min":3,"max":4},{"id":"C","text":"1 or 2","min":1,"max":2},{"id":"D","text":"none","min":0,"max":0}],
+ "runs":["frozen/ex3_r1","frozen/ex3_r2","frozen/ex3_r3","frozen/ex3_r4","frozen/ex3_r5"],
+ "explain":"How it chose is more interesting than the count: to find the files it usually picked glob, but reading and writing went into one bash command every time, and read_file and write_file were never called. The tools are options for the model, not rules. One model, one setting, one task, 5 runs."}'></div>
+<p>Step through the second run: glob in round 1, then one bash command with <code>head -n1</code> and a redirect into summary.md.</p>
+<div data-lcc="replay" data-config='{"run":"frozen/ex3_r2","scale":1200}'></div>
+
+<h2>What this episode shows</h2>
+<ul>
+  <li>Adding tools means adding descriptions to the list sent with every request, and a map from tool name to function. The loop itself only changes where a tool is run.</li>
+  <li>The tool descriptions ride along in every round, so more tools means more input tokens each time.</li>
+  <li>The model picks a tool at each step. The file tools go through a path check; bash does not, which is where the next episode starts.</li>
+</ul>
+
+<h2>Run it yourself, for free</h2>
+<p>No API key needed: the recorder rebuilds every terminal in the video from the saved runs.</p>
+<pre><code>git clone https://github.com/shareAI-lab/learn-claude-code
+git -C learn-claude-code checkout 448c75b
+cd E02
+python3 -B runner/replay.py frozen/ex1        # the bash-only version: one sed command
+python3 -B runner/replay.py frozen/ex2_r1     # the five-tool version: one edit_file call
+python3 -B count_runs.py                      # count the repeated runs of examples 2 and 3</code></pre>
+<p><a class="button" href="https://github.com/apexcompute/apexcompute.github.io/tree/main/courses/claude-code/E02">Code and README on GitHub</a></p>
+<details><summary>A question to try: the file tools check that a path stays inside the workspace, but bash does not. What could the model do with bash that read_file would refuse?</summary>
+<p>Read or write a file outside the workspace, for example with <code>cat ../something</code> or a redirect to an absolute path. read_file would refuse that path; bash runs whatever command it is given. Episode 3 looks at who gets to say no before a command runs.</p>
+</details>
+<p class="note">Study log of <a href="https://github.com/shareAI-lab/learn-claude-code">shareAI-lab/learn-claude-code</a> (MIT, Copyright (c) 2024 shareAI Lab). Not affiliated with shareAI Lab or Anthropic.</p>
+
+<nav class="pager"><a href="../E01/">← 30 lines that turn a chatbot into an agent</a><a class="button sub" href="https://www.youtube.com/@apexcompute372?sub_confirmation=1">Subscribe on YouTube</a><span class="note">Next episode soon</span></nav>
+<p class="note">Code license: <a href="https://github.com/apexcompute/apexcompute.github.io/blob/main/courses/claude-code/NOTICE.md">NOTICE.md</a>.</p>
+</main>
+<footer>
+  <p>© 2026 ApexCompute · <a href="../../../privacy.html">Privacy</a></p>
+</footer>
+<script src="../../../assets/lcc.js"></script>
+</body>
+</html>

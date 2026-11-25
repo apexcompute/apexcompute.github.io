@@ -1,0 +1,4 @@
+# E02 example 2 (repeated 5 times, fixed before the first run; see count_runs.py): the same task given to s02, which has 5 tools
+chapter: s02_tool_use
+seed: ../seeds/notes_project
+inputs: ["In notes/todo.txt, change \"Buy milk\" to \"Buy soy milk\"."]

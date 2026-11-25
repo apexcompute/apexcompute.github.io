@@ -1,0 +1,4 @@
+# E02 example 1: the s01 version (bash only) edits one line in one file
+chapter: s01_agent_loop
+seed: ../seeds/notes_project
+inputs: ["In notes/todo.txt, change \"Buy milk\" to \"Buy soy milk\"."]
