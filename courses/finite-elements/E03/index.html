@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exact at the nodes? Finite elements in Python · Finite Elements from Scratch</title>
+<meta name="description" content="The same heated bar as episode 2 (4 cm, 80 W, both ends at 20 °C), now cut into 4 and then 8 elements and solved by a short program. Guess a node, then cut the bar finer yourself and watch where the error hides.">
+<meta property="og:title" content="Exact at the nodes? Finite elements in Python">
+<meta property="og:description" content="The same heated bar as episode 2 (4 cm, 80 W, both ends at 20 °C), now cut into 4 and then 8 elements and solved by a short program. Guess a node, then cut the bar finer yourself and watch where the error hides.">
+<meta property="og:image" content="https://i.ytimg.com/vi/iAaIbP2CYNo/maxresdefault.jpg">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../../../">ApexCompute</a>
+  <nav><a href="../../../courses/">Courses</a><a href="../../../privacy.html">Privacy</a></nav>
+</header>
+<main class="episode">
+<p class="kicker"><a href="../">Finite Elements from Scratch</a> · Episode 3</p>
+<h1>Exact at the nodes? Finite elements in Python</h1>
+<p class="lead">The same heated bar as episode 2 (4 cm, 80 W, both ends at 20 °C), now cut into 4 and then 8 elements and solved by a short program. Guess a node, then cut the bar finer yourself and watch where the error hides.</p>
+<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/iAaIbP2CYNo" title="Watch the episode" loading="lazy" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>
+
+<h2>1. Guess first</h2>
+<p>The exact curve is 35 °C at 1 cm; last episode's two-element line gave 30 °C there. With 4 elements there is a new node at 1 cm. Call it node 2. What temperature will the method give it?</p>
+<div data-fea="quiz" data-config='{"answer":"C",
+ "options":[{"id":"A","text":"still 30 °C"},{"id":"B","text":"between 30 and 35 °C"},{"id":"C","text":"exactly 35 °C"},{"id":"D","text":"higher than 35 °C"}],
+ "explain":{"A":"The new node is not a point on the old straight line: its own row of the system lets the line bend at 1 cm.",
+  "B":"Each piece is still a straight shortcut, but that shortcut only costs accuracy between the nodes, not at them.",
+  "C":"Plug the exact values into node 2&apos;s row: 4 × 35 − 2 × 40 = 60, the right side. The exact temperatures fit every row, so the solved nodes are exact.",
+  "D":"Sharing the heat to the nodes by the hats is not off here: each hat collects exactly the heat the exact solution needs at its node."},
+ "after":"Cut the bar finer below and look at the error table."}'></div>
+
+<h2>2. Cut it finer</h2>
+<p>Each element has the small table (kA/h) × [1, −1; −1, 1], and each hat collects its share of the heat. Assemble, move the known end temperatures to the right side, solve. Pick a number of elements: the nodes stay on the dashed exact curve, and the error between them drops to a quarter each time the elements get half as long.</p>
+<div data-fea="refine" data-config='{"start":4}'></div>
+<p>Why the nodes are exact here: in 1D, for this equation, with k and A constant and the heat integrals done exactly, the exact temperatures satisfy every row. It does not hold in general in 2D. Inside each element the broken line is straight while the exact curve bends, so all the error sits there.</p>
+
+<h2>What this episode shows</h2>
+<ul>
+  <li>Assembling a bigger table is the same step repeated: each element adds its 2×2 table where its two nodes cross, and each row is the heat balance of one node.</li>
+  <li>Known end temperatures move to the right side, and their rows and columns are crossed out.</li>
+  <li>The whole method fits in five steps and six short functions. This approach, the same functions for the temperature and the test, is the Galerkin method.</li>
+</ul>
+
+<h2>Run it yourself</h2>
+<p>One NumPy script prints the big table, the right side, the temperatures, the end heat flows and the error tables from the video, each step with a PASS check.</p>
+<pre><code>python3 bar_e03.py
+python3 bar_e03.py --source middle     # the exercise below</code></pre>
+<p><a class="button" href="https://github.com/apexcompute/apexcompute.github.io/tree/main/courses/finite-elements/E03">Code and README on GitHub</a></p>
+<details><summary>Exercise: heat only the middle half of the bar (1 cm to 3 cm), same 80 W. With 4 elements, guess first: which element middles still match the exact curve? (Switch "heat" in the figure above to check.)</summary>
+<p>The nodes are still exact (20, 40, 50, 40, 20 °C). The middles of elements 1 and 4 match too, because no heat is made there and the exact curve is straight. The middles of elements 2 and 3 are 2.5 K low (45 °C against 47.5 °C), because the curve bends where the heat is made.</p>
+</details>
+
+<nav class="pager"><a href="../E02/">← The weak form: why we rewrite the heat equation</a><a class="button sub" href="https://www.youtube.com/@apexcompute372?sub_confirmation=1">Subscribe on YouTube</a><span class="note">Next episode soon</span></nav>
+<p class="note">Code license: <a href="https://github.com/apexcompute/apexcompute.github.io/blob/main/courses/finite-elements/NOTICE.md">NOTICE.md</a>.</p>
+</main>
+<footer>
+  <p>© 2026 ApexCompute · <a href="../../../privacy.html">Privacy</a></p>
+</footer>
+<script src="../../../assets/fea.js"></script>
+</body>
+</html>

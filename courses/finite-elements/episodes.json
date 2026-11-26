@@ -8,5 +8,10 @@
   "title": "The weak form: why we rewrite the heat equation",
   "lead": "An aluminum bar, 4 cm long, makes 80 W of heat along its length; both ends are held at 20 °C. A broken line of two straight pieces can't go into its equation. Rewrite the equation, and it can. Here you find the middle temperature yourself, by balancing one hat.",
   "video": "https://youtu.be/sir56LEcleo"
+ },
+ "E03": {
+  "title": "Exact at the nodes? Finite elements in Python",
+  "lead": "The same heated bar as episode 2 (4 cm, 80 W, both ends at 20 °C), now cut into 4 and then 8 elements and solved by a short program. Guess a node, then cut the bar finer yourself and watch where the error hides.",
+  "video": "https://youtu.be/iAaIbP2CYNo"
  }
 }
