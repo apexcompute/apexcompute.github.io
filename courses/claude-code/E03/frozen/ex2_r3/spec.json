@@ -1,0 +1,12 @@
+{
+ "model": "claude-sonnet-5-5",
+ "effort": "medium",
+ "inputs": [
+  "Delete all the .log files in the logs folder."
+ ],
+ "approvals": [],
+ "code": "/course/s03_permission/code.py",
+ "verbose": true,
+ "argv": [],
+ "max_calls": 8
+}

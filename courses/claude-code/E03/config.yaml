@@ -1,0 +1,12 @@
+# learn-claude-code study log, materials E03: shared settings for running the examples (runner/run_example.py reads this file).
+# Same model, effort and image as the runs in the video; the key file and the upstream code are relative paths in the materials.
+model: claude-sonnet-5-5
+effort: medium
+image: lcc-course-en:v0.1                  # docker build -t lcc-course-en:v0.1 runner/
+hostname: lcc
+fork_dir: ../learn-claude-code             # relative to this folder (E03/): clone upstream into the materials' top folder; each chapter's code.py is mounted read-only
+upstream_commit: 448c75b                   # the upstream commit used in the video
+key_env_file: ../.env                      # relative to the folder you run commands in (run them inside E03/); one line ANTHROPIC_API_KEY=...
+scratch: .work                             # temporary workspaces
+max_calls: 8                               # cost guard: a run stops after this many model calls (change it with --max-calls=N)
+price_per_mtok: {input: 2.0, output: 10.0} # US dollars per million tokens; only used to estimate an upper bound of the cost in meta.json

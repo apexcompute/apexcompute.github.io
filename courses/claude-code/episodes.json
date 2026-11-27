@@ -8,5 +8,10 @@
   "title": "Give an agent 5 tools without changing the loop",
   "lead": "Chapter 2 of learn-claude-code adds four tools, to read, write, edit and find files. The loop from episode 1 barely changes: it runs whatever tool name the model writes. Step through real runs and see which tool the model picks, step by step.",
   "video": "https://youtu.be/nGXc5afCTC8"
+ },
+ "E03": {
+  "title": "Who stops an AI agent from running rm?",
+  "lead": "The model writes a command and the program runs it. Chapter 3 of learn-claude-code puts gates in between: a deny list that blocks without asking, and a check that stops and asks you first. Step through real runs and see each gate at work.",
+  "video": "https://youtu.be/gJomDEOjmnE"
  }
 }

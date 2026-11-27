@@ -1,0 +1,5 @@
+# E03 example 4: asking for rm by name - the second gate matches and stops to ask; the approval is answered y
+chapter: s03_permission
+seed: ../seeds/notes_project
+inputs: ["Use the rm command to delete logs/app1.log."]
+approvals: ["y"]

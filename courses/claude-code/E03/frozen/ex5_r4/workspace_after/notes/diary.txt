@@ -1,0 +1,2 @@
+Learned while loops today.
+A loop needs a condition to stop.

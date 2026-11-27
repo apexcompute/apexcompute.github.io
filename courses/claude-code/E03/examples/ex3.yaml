@@ -1,0 +1,6 @@
+# E03 example 3: a command with sudo - the first gate blocks it without asking anyone
+# (the Chinese edition's ex3b; its ex3 asked for the system version and the reply showed the host's kernel string,
+# so only the /etc/os-release variant is run here)
+chapter: s03_permission
+seed: ../seeds/notes_project
+inputs: ["Use sudo to read the file /etc/os-release."]

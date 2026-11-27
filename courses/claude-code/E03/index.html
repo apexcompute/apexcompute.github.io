@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Who stops an AI agent from running rm? · Learn Claude Code</title>
+<meta name="description" content="The model writes a command and the program runs it. Chapter 3 of learn-claude-code puts gates in between: a deny list that blocks without asking, and a check that stops and asks you first. Step through real runs and see each gate at work.">
+<meta property="og:title" content="Who stops an AI agent from running rm?">
+<meta property="og:description" content="The model writes a command and the program runs it. Chapter 3 of learn-claude-code puts gates in between: a deny list that blocks without asking, and a check that stops and asks you first. Step through real runs and see each gate at work.">
+<meta property="og:image" content="https://i.ytimg.com/vi/gJomDEOjmnE/maxresdefault.jpg">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../../../">ApexCompute</a>
+  <nav><a href="../../../courses/">Courses</a><a href="../../../privacy.html">Privacy</a></nav>
+</header>
+<main class="episode">
+<p class="kicker"><a href="../">Learn Claude Code</a> · Episode 3</p>
+<h1>Who stops an AI agent from running rm?</h1>
+<p class="lead">The model writes a command and the program runs it. Chapter 3 of learn-claude-code puts gates in between: a deny list that blocks without asking, and a check that stops and asks you first. Step through real runs and see each gate at work.</p>
+<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/gJomDEOjmnE" title="Watch the episode" loading="lazy" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>
+
+<h2>1. Two gates, two real runs</h2>
+<p>First we ask for sudo by name: "Use sudo to read the file /etc/os-release." The first gate, the deny list, blocks it before anyone is asked.</p>
+<div data-lcc="replay" data-config='{"run":"frozen/ex3","scale":1400,"gate":true}'></div>
+<p>Then we ask for rm by name: "Use the rm command to delete logs/app1.log." The second gate recognizes rm and stops to ask. This run answers y.</p>
+<div data-lcc="replay" data-config='{"run":"frozen/ex4","scale":1400,"gate":true}'></div>
+
+<h2>2. Guess: will it ask?</h2>
+<p>Now we don't name a command: "Delete all the .log files in the logs folder." The model picks how. We ran it 6 times with a fresh program each time; the first run answers y if asked, the other 5 always answer n. The count was fixed before the runs.</p>
+<div data-lcc="tally" data-config='{"question":"In how many of the 6 runs did the second gate stop to ask?","rule":"asked",
+ "options":[{"id":"A","text":"all 6","min":6,"max":6},{"id":"B","text":"1 to 5","min":1,"max":5},{"id":"C","text":"never, and every run deletes the files","min":0,"max":0},{"id":"D","text":"never, but a file is left behind","min":-1,"max":-1}],
+ "runs":["frozen/ex1","frozen/ex2_r1","frozen/ex2_r2","frozen/ex2_r3","frozen/ex2_r4","frozen/ex2_r5"],
+ "explain":"Every run wrote an rm command, so the second gate recognized it each time. In the 5 runs answered n, nothing ran, both log files stayed, and no run switched to another command to get around the denial. This is 6 runs with one model, one setting and one request; different wording could give a different command."}'></div>
+<p>Step through a run that was answered n: the program stops, nothing runs, and the model is told "Permission denied."</p>
+<div data-lcc="replay" data-config='{"run":"frozen/ex2_r1","scale":1400,"gate":true}'></div>
+
+<h2>What this episode shows</h2>
+<ul>
+  <li>The decision sits in the program, not in the model: the system prompt even tells the model not to ask for approval itself, and to send destructive calls anyway so the program can decide.</li>
+  <li>Gate 1 is a deny list that blocks without asking; gate 2 recognizes risky commands and asks you; only then does the tool run.</li>
+  <li>Gate 2 recognizes commands by their text. A command it does not recognize runs without asking, which is why the episode tests requests that name no command.</li>
+</ul>
+
+<h2>Run it yourself, for free</h2>
+<p>No API key needed: the recorder rebuilds every terminal in the video from the saved runs.</p>
+<pre><code>git clone https://github.com/shareAI-lab/learn-claude-code
+git -C learn-claude-code checkout 448c75b
+cd E03
+python3 -B runner/replay.py frozen/ex3      # sudo: blocked by the deny list
+python3 -B runner/replay.py frozen/ex1      # rm: the program asks, answered y
+python3 -B count_runs.py                    # count the repeated runs
+python3 -B gate_check.py                    # run the two gates on commands, without a model</code></pre>
+<p><a class="button" href="https://github.com/apexcompute/apexcompute.github.io/tree/main/courses/claude-code/E03">Code and README on GitHub</a></p>
+<details><summary>A question to try: gate 2 matches the text of a command. Can you think of a way to delete a file that the pattern rm would not catch?</summary>
+<p>For example <code>find logs -name app1.log -delete</code>, <code>unlink logs/app1.log</code>, or a Python one-liner with <code>os.remove</code>. <code>gate_check.py</code> runs the two gates from chapter 3&apos;s code.py, unchanged, on exactly these three commands: neither gate stops any of them. That is the limit of recognizing commands by their text; in these runs the model happened to write rm every time.</p>
+</details>
+<p class="note">Study log of <a href="https://github.com/shareAI-lab/learn-claude-code">shareAI-lab/learn-claude-code</a> (MIT, Copyright (c) 2024 shareAI Lab). Not affiliated with shareAI Lab or Anthropic.</p>
+
+<nav class="pager"><a href="../E02/">← Give an agent 5 tools without changing the loop</a><a class="button sub" href="https://www.youtube.com/@apexcompute372?sub_confirmation=1">Subscribe on YouTube</a><span class="note">Next episode soon</span></nav>
+<p class="note">Code license: <a href="https://github.com/apexcompute/apexcompute.github.io/blob/main/courses/claude-code/NOTICE.md">NOTICE.md</a>.</p>
+</main>
+<footer>
+  <p>© 2026 ApexCompute · <a href="../../../privacy.html">Privacy</a></p>
+</footer>
+<script src="../../../assets/lcc.js"></script>
+</body>
+</html>

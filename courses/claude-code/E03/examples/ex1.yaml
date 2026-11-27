@@ -1,0 +1,5 @@
+# E03 example 1: delete files, answer y at the approval prompt
+chapter: s03_permission
+seed: ../seeds/notes_project
+inputs: ["Delete all the .log files in the logs folder."]
+approvals: ["y"]

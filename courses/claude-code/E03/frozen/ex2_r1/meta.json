@@ -1,0 +1,16 @@
+{
+ "example": "ex2_r1",
+ "chapter": "s03_permission",
+ "model": "claude-sonnet-5-5",
+ "effort": "medium",
+ "image": "lcc-course-en:v0.1",
+ "fork_head": "443220f",
+ "upstream": "448c75b",
+ "exit": 0,
+ "wall_seconds": 7.6,
+ "max_calls": 8,
+ "calls": 2,
+ "input_tokens": 1713,
+ "output_tokens": 261,
+ "cost_usd_upper": 0.006
+}

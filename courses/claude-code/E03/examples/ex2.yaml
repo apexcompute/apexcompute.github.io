@@ -1,0 +1,5 @@
+# E03 example 2 (repeated 5 times, fixed before the first run; see count_runs.py): the same deletion, every approval answered n - what does the model do next?
+chapter: s03_permission
+seed: ../seeds/notes_project
+inputs: ["Delete all the .log files in the logs folder."]
+approvals: []

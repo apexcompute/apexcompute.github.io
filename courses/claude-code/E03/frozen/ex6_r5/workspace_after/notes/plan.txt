@@ -1,0 +1,3 @@
+Mon: finish chapter three
+Wed: review loops
+Fri: write a small program
