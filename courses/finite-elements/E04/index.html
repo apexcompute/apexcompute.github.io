@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>More nodes, worse answer? Shape functions · Finite Elements from Scratch</title>
+<meta name="description" content="The same 4 cm bar, but now all 80 W comes from a heater 0.4 cm wide in the middle. Take the exact temperatures at 11 nodes and join them two ways: 10 straight pieces, or one smooth curve of degree 10. Guess which is closer, then try more nodes yourself.">
+<meta property="og:title" content="More nodes, worse answer? Shape functions">
+<meta property="og:description" content="The same 4 cm bar, but now all 80 W comes from a heater 0.4 cm wide in the middle. Take the exact temperatures at 11 nodes and join them two ways: 10 straight pieces, or one smooth curve of degree 10. Guess which is closer, then try more nodes yourself.">
+<meta property="og:image" content="https://i.ytimg.com/vi/E5_gn7ajWzo/maxresdefault.jpg">
+<link rel="stylesheet" href="../../../assets/style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../../../">ApexCompute</a>
+  <nav><a href="../../../courses/">Courses</a><a href="../../../privacy.html">Privacy</a></nav>
+</header>
+<main class="episode">
+<p class="kicker"><a href="../">Finite Elements from Scratch</a> · Episode 4</p>
+<h1>More nodes, worse answer? Shape functions</h1>
+<p class="lead">The same 4 cm bar, but now all 80 W comes from a heater 0.4 cm wide in the middle. Take the exact temperatures at 11 nodes and join them two ways: 10 straight pieces, or one smooth curve of degree 10. Guess which is closer, then try more nodes yourself.</p>
+<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/E5_gn7ajWzo" title="Watch the episode" loading="lazy" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>
+
+<h2>1. Guess first</h2>
+<p>The true temperature has a dome in the middle, 58 °C at the top. Joined by 10 straight pieces, the 11 node values are off by at most 1.1 K. Now one curve of degree 10 goes through the same 11 points. At its worst, how far is it from the true temperature?</p>
+<div data-fea="quiz" data-config='{"answer":"D",
+ "options":[{"id":"A","text":"less than 0.1 K"},{"id":"B","text":"at least 0.1 K, but less than 1.1 K"},{"id":"C","text":"no better than 1.1 K, but at most 5 K"},{"id":"D","text":"more than 5 K"}],
+ "explain":{"A":"A smooth high-degree curve is great at round shapes, and with the whole bar heated it would be exact. But here the bend is squeezed into 0.4 cm, and the curve has to pass all 11 points at once.",
+  "B":"Same 11 numbers, so you might expect a little better than straight lines. Near the middle it is close, but near the two ends it shoots off.",
+  "C":"The sharp turn at the heater does cost something, but the big miss is not there: it is near the ends.",
+  "D":"At 0.12 cm from the left end the curve is at 36.6 °C while the true temperature is 22.4 °C: 14.2 K off, and the same at the right end. Equally spaced nodes make the ends swing (the Runge phenomenon)."},
+ "after":"Move the slider below: with equal spacing, more nodes make it worse."}'></div>
+
+<h2>2. Try more nodes</h2>
+<p>Both lines pass through the same node values. Change the number of nodes, crowd the nodes toward the ends (Chebyshev spacing), or widen the heater, and watch the two largest errors.</p>
+<div data-fea="runge" data-config='{"start":11}'></div>
+<p>Two routes to more accuracy: more, smaller elements (h), or a higher degree with the nodes placed well (p). One curve through equally spaced nodes is neither: at 17 nodes it is off by over 100 K.</p>
+
+<h2>What this episode shows</h2>
+<ul>
+  <li>Inside an element, the temperature is the node values times the shape functions: each node's piece of shape, 1 at its own node and 0 at the others.</li>
+  <li>With three nodes in one element (second degree), one element is exact for a bar heated evenly along its whole length, because the true temperature is itself a parabola.</li>
+  <li>Raise only the middle node of a degree-10 curve by 1 K and the curve moves by up to 6.1 K near the ends; with straight pieces, the change stays in the two elements next to that node.</li>
+</ul>
+
+<h2>Run it yourself</h2>
+<p>One NumPy script computes every number in the video: the exact temperature, the largest error of each way of joining the nodes, the bulges of the shape functions, the curve the equation decides, and a linear triangle.</p>
+<pre><code>python3 shape_e04.py
+python3 shape_e04.py --width 4     # the exercise below</code></pre>
+<p><a class="button" href="https://github.com/apexcompute/apexcompute.github.io/tree/main/courses/finite-elements/E04">Code and README on GitHub</a></p>
+<details><summary>Exercise: heat the whole bar evenly instead (heater width 4 cm). Guess first: how far off is the degree-10 curve through 11 equally spaced nodes now? (Choose "whole bar" in the figure above to check.)</summary>
+<p>0 K. The exact temperature is then a parabola, and a curve of degree 10 can be a parabola exactly. The 10 straight pieces are off by 0.2 K. The swinging ends come from forcing one smooth curve through a sharp bend, not from high degree alone.</p>
+</details>
+
+<nav class="pager"><a href="../E03/">← Exact at the nodes? Finite elements in Python</a><a class="button sub" href="https://www.youtube.com/@apexcompute372?sub_confirmation=1">Subscribe on YouTube</a><span class="note">Next episode soon</span></nav>
+<p class="note">Code license: <a href="https://github.com/apexcompute/apexcompute.github.io/blob/main/courses/finite-elements/NOTICE.md">NOTICE.md</a>.</p>
+</main>
+<footer>
+  <p>© 2026 ApexCompute · <a href="../../../privacy.html">Privacy</a></p>
+</footer>
+<script src="../../../assets/fea.js"></script>
+</body>
+</html>

@@ -13,5 +13,10 @@
   "title": "Exact at the nodes? Finite elements in Python",
   "lead": "The same heated bar as episode 2 (4 cm, 80 W, both ends at 20 °C), now cut into 4 and then 8 elements and solved by a short program. Guess a node, then cut the bar finer yourself and watch where the error hides.",
   "video": "https://youtu.be/iAaIbP2CYNo"
+ },
+ "E04": {
+  "title": "More nodes, worse answer? Shape functions",
+  "lead": "The same 4 cm bar, but now all 80 W comes from a heater 0.4 cm wide in the middle. Take the exact temperatures at 11 nodes and join them two ways: 10 straight pieces, or one smooth curve of degree 10. Guess which is closer, then try more nodes yourself.",
+  "video": "https://youtu.be/E5_gn7ajWzo"
  }
 }
